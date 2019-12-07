@@ -13,8 +13,7 @@ import string
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
-HAND_SIZE = 7
-
+HAND_SIZE=7
 SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10,'*':0
 }
@@ -301,7 +300,8 @@ def play_hand(hand, word_list):
         display_hand(hand)
         word=input("Enter word, or !! to indicate that you are finished: ")
         if word=="!!":
-            print("Total score: {} points".format(totalscore))   
+            print()
+            print("Total score for this hand is: {} points".format(totalscore))   
             break
         else:
             result=is_valid_word(word, hand, word_list)
@@ -314,7 +314,9 @@ def play_hand(hand, word_list):
             hand=update_hand(hand, word)
             handlength=calculate_handlen(hand)
     if handlength<=0:
-        print("Ran out of letters. Total score: {} points".format(totalscore))
+        print()
+        print("Ran out of letters.\n Total score for this hand is: {} points".format(totalscore))
+    return totalscore
 #
 # Problem #6: Playing a game
 # 
@@ -388,8 +390,30 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
-    
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    handsize=int(input("Enter total number of hands: "))
+    totalscore=0
+    replay=1
+    substitute=1
+    for i in range(handsize):
+        hand=deal_hand(HAND_SIZE)
+        print("Current Head:",end=" ")
+        display_hand(hand)
+        if substitute>0:
+            if input("Would you like to substitute a letter? Write Yes or No ").lower()=="yes":
+                letter=input("Which letter would you like to replace: ")
+                head=substitute_hand(hand, letter)
+                substitute-=1
+        handscore=play_hand(hand, word_list)
+        replayscore=0
+        if replay>0:
+            if input("Would you like to replay the hand? Write Yes or No ").lower()=="yes":
+                replayscore=play_hand(hand, word_list)
+                replay-=1
+        totalscore+=max(replayscore,handscore)
+        print("_ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    print("Total score over all hands: {}".format(totalscore))
+        
+        
     
 
 
@@ -400,6 +424,4 @@ def play_game(word_list):
 #
 if __name__ == '__main__':
     word_list = load_words()
-    hand={"a":1,"c":1, "f":1, "i":1,"*":1, "t":1, "x":1}
-    print(substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l'))
     play_game(word_list)
