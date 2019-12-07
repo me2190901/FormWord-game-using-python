@@ -361,36 +361,15 @@ def substitute_hand(hand, letter):
        
     
 def play_game(word_list):
-    """
-    Allow the user to play a series of hands
-
-    * Asks the user to input a total number of hands
-
-    * Accumulates the score for each hand into a total score for the 
-      entire series
- 
-    * For each hand, before playing, ask the user if they want to substitute
-      one letter for another. If the user inputs 'yes', prompt them for their
-      desired letter. This can only be done once during the game. Once the
-      substitue option is used, the user should not be asked if they want to
-      substitute letters in the future.
-
-    * For each hand, ask the user if they would like to replay the hand.
-      If the user inputs 'yes', they will replay the hand and keep 
-      the better of the two scores for that hand.  This can only be done once 
-      during the game. Once the replay option is used, the user should not
-      be asked if they want to replay future hands. Replaying the hand does
-      not count as one of the total number of hands the user initially
-      wanted to play.
-
-            * Note: if you replay a hand, you do not get the option to substitute
-                    a letter - you must play whatever hand you just had.
-      
-    * Returns the total score for the series of hands
-
-    word_list: list of lowercase strings
-    """
-    handsize=int(input("Enter total number of hands: "))
+    print("Welcome to the game FormWord!")
+    print()
+    print("Here Are Rules For Your Game")
+    print("press enter to view next line")
+    for i in range(1,len(rules)):
+        input()
+        print(rules[i])
+        print()
+    handsize=int(input("Enter total number hands you want to pick: "))
     totalscore=0
     replay=1
     substitute=1
@@ -415,11 +394,9 @@ def play_game(word_list):
         totalscore+=max(replayscore,handscore)
         print("_ _ _ _ _ _ _ _ _ _ _ _ _ _")
     print("Total score over all hands: {}".format(totalscore))
+    avg_score=totalscore/handsize
+    print("Average Score: {}".format(avg_score))
         
-        
-    
-
-
 #
 # Build data structures used for entire session and play game
 # Do not remove the "if __name__ == '__main__':" line - this code is executed
@@ -427,4 +404,7 @@ def play_game(word_list):
 #
 if __name__ == '__main__':
     word_list = load_words()
+    fin=open("rules.txt","r")
+    rules=fin.readlines()
+    fin.close()
     play_game(word_list)
