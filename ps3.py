@@ -16,7 +16,7 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10,'*':0
 }
 
 # -----------------------------------
@@ -143,10 +143,10 @@ def deal_hand(n):
     hand={}
     num_vowels = int(math.ceil(n / 3))
 
-    for i in range(num_vowels):
+    for i in range(num_vowels-1):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
-    
+    hand["*"]=1    
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
@@ -188,6 +188,16 @@ def update_hand(hand, word):
 #
 # Problem #3: Test word validity
 #
+def wildcard(word,hand,word_list):
+    for i in list(VOWELS):
+        wordcopy=word
+        handcopy=hand.copy()
+        wordcopy=wordcopy.replace("*",i)
+        del handcopy["*"]
+        handcopy[i]=handcopy.get(i,0)+1
+        if is_valid_word(wordcopy, handcopy, word_list)==True:
+            return True
+    return False
 def is_valid_word(word, hand, word_list):
     """
     Returns True if word is in the word_list and is entirely
@@ -203,6 +213,8 @@ def is_valid_word(word, hand, word_list):
     word=word.lower()
     hand=hand.copy()
     freq=get_frequency_dict(list(word))
+    if "*" in word:
+        return wildcard(word,hand,word_list)
     if word in word_list:
         result1=True
     for i in list(word):
@@ -218,8 +230,7 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    return len(hand)
 
 def play_hand(hand, word_list):
 
@@ -283,9 +294,27 @@ def play_hand(hand, word_list):
     # so tell user the total score
 
     # Return the total score as result of function
-
-
-
+    totalscore=0
+    handlength=calculate_handlen(hand)
+    while handlength>0:
+        print("Current Head:", end=" ")
+        display_hand(hand)
+        word=input("Enter word, or !! to indicate that you are finished: ")
+        if word=="!!":
+            print("Total score: {} points".format(totalscore))   
+            break
+        else:
+            result=is_valid_word(word, hand, word_list)
+            if result==True:
+                totalscore+=get_word_score(word,handlength)
+                print("{} earned {} points.".format(word,get_word_score(word,handlength)))
+                print("Total: {} points".format(totalscore))
+            else:
+                print("That is not a valid word. Please choose another word.")
+            hand=update_hand(hand, word)
+            handlength=calculate_handlen(hand)
+    if handlength<=0:
+        print("Ran out of letters. Total score: {} points".format(totalscore))
 #
 # Problem #6: Playing a game
 # 
@@ -317,8 +346,16 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    alphaset=VOWELS+CONSONANTS
+    handcopy=hand.copy()
+    new_letter=random.choice(alphaset)
+    if letter in handcopy:
+        while new_letter==letter or (new_letter in hand):
+            new_letter=random.choice(alphaset)
+        freq=handcopy[letter]
+        del handcopy[letter]
+        handcopy[new_letter]=freq
+    return handcopy
        
     
 def play_game(word_list):
@@ -363,7 +400,6 @@ def play_game(word_list):
 #
 if __name__ == '__main__':
     word_list = load_words()
-    hand = {'n': 1, 'h': 1, 'o': 1, 'y': 1, 'd':1, 'w':1, 'e': 2}
-    word = "honey"
-    print(is_valid_word(word, hand, word_list))
+    hand={"a":1,"c":1, "f":1, "i":1,"*":1, "t":1, "x":1}
+    print(substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l'))
     play_game(word_list)
