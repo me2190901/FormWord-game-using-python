@@ -404,7 +404,7 @@ def play_game(word_list):
                 while letter=="*":
                     print("You cannot replace wildcard")
                     letter=input("Try another letter you would like to replace: ")
-                head=substitute_hand(hand, letter)
+                hand=substitute_hand(hand, letter)
                 substitute-=1
         handscore=play_hand(hand, word_list)
         replayscore=0
