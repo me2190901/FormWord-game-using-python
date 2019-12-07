@@ -401,6 +401,9 @@ def play_game(word_list):
         if substitute>0:
             if input("Would you like to substitute a letter? Write Yes or No ").lower()=="yes":
                 letter=input("Which letter would you like to replace: ")
+                while letter=="*":
+                    print("You cannot replace wildcard")
+                    letter=input("Try another letter you would like to replace: ")
                 head=substitute_hand(hand, letter)
                 substitute-=1
         handscore=play_hand(hand, word_list)
