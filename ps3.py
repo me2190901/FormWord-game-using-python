@@ -91,8 +91,14 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    word=word.lower()
+    sum=0
+    m=len(word)
+    for i in range(m):
+        sum+=SCRABBLE_LETTER_VALUES[word[i]]
+    first=sum
+    second=max(7*m - 3*(n-m),1)
+    return first*second
 
 #
 # Make sure you understand how this function works and what it does!
@@ -111,8 +117,9 @@ def display_hand(hand):
     """
     
     for letter in hand.keys():
-        for j in range(hand[letter]):
-             print(letter, end=' ')      # print all on the same line
+        if hand[letter]>0:
+            for j in range(hand[letter]):
+                print(letter, end=' ')      # print all on the same line
     print()                              # print an empty line
 
 #
@@ -167,8 +174,16 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-
-    pass  # TO DO... Remove this line when you implement this function
+    word=word.lower()
+    updatedhand={}
+    hand=hand.copy()
+    for x in list(word):
+        hand[x] = hand.get(x,0) - 1
+    for letter in hand.keys():
+        if hand[letter]>0:
+            updatedhand[letter]=hand[letter]
+    return updatedhand
+    
 
 #
 # Problem #3: Test word validity
@@ -184,10 +199,16 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
-
-    pass  # TO DO... Remove this line when you implement this function
-
-#
+    result1=False
+    word=word.lower()
+    hand=hand.copy()
+    freq=get_frequency_dict(list(word))
+    if word in word_list:
+        result1=True
+    for i in list(word):
+        if hand.get(i,0)<freq[i]:
+            return False
+    return result1
 # Problem #5: Playing a hand
 #
 def calculate_handlen(hand):
@@ -342,4 +363,7 @@ def play_game(word_list):
 #
 if __name__ == '__main__':
     word_list = load_words()
+    hand = {'n': 1, 'h': 1, 'o': 1, 'y': 1, 'd':1, 'w':1, 'e': 2}
+    word = "honey"
+    print(is_valid_word(word, hand, word_list))
     play_game(word_list)
